@@ -5,6 +5,7 @@
         <file>qml/ButtonAddTask.qml</file>
         <file>img/add.png</file>
         <file>qml/EditLabel.qml</file>
-        <file>qml/CurrentTask.qml</file>
+        <file>qml/Task.qml</file>
+        <file>qml/Step.qml</file>
     </qresource>
 </RCC>

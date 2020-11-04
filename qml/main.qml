@@ -44,7 +44,7 @@ Window {
         return {
               description: description
             , done: false
-            , subStep: []
+            , steps: []
         }
     }
     function addStepToTask(task, step) {
@@ -129,7 +129,7 @@ Window {
 
                 onTabTapped: displayTask(model[index])
             }
-            CurrentTask {
+            Task {
                 id: currentTask
 
                 Layout.fillWidth: true
