@@ -24,6 +24,7 @@ Item {
     TextField {
         anchors.fill: parent
         visible: hoverHandler.hovered || (text != '')
+        focus: visible
         onEditingFinished: {
             if (visible) root.editingFinished(text)
             text = ''
