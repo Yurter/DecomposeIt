@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/VerticalTapBar.qml</file>
+        <file>qml/ButtonAddTask.qml</file>
+        <file>img/add.png</file>
+        <file>qml/EditLabel.qml</file>
+        <file>qml/CurrentTask.qml</file>
+    </qresource>
+</RCC>
