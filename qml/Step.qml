@@ -7,6 +7,8 @@ Item {
     width: 100
     height: 40
 
+    signal deleted()
+
     property var step
     onStepChanged: {
         checkBox.checked = step.done
@@ -21,8 +23,16 @@ Item {
     }
 
     Column {
-        CheckBox {
-            id: checkBox
+        Row {
+            CheckBox {
+                id: checkBox
+            }
+            Button {
+                width: 20
+                height: 20
+                text: '-'
+                onPressed: root.deleted()
+            }
         }
         Column {
             id: subSteps

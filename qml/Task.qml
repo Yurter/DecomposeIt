@@ -20,11 +20,20 @@ Item {
         for (let i in task.steps) {
             const component = Qt.createComponent("Step.qml");
             if (Component.Ready === component.status) {
-                component.createObject(steps, { step: task.steps[i] });
+                const step_obj = component.createObject(steps, { step: task.steps[i] });
+                step_obj.deleted.connect(function() {
+                    for (let k in task.steps) {
+                        if (task.steps[k].description === step_obj.step.description) {
+                            task.steps.splice(k, 1)
+                            taskEdited(root.task)
+                            step_obj.destroy()
+                            break
+                        }
+                    }
+                })
             }
         }
     }
-
 
     Rectangle {
         anchors.fill: parent
@@ -59,7 +68,9 @@ Item {
         }
         Button {
             visible: task !== null
-            text: qsTr('Add step')
+            width: 20
+            height: 20
+            text: '+'
             onPressed: {
                 const newStep = createStep("Some step...")
                 task.steps.push(newStep)
@@ -67,11 +78,18 @@ Item {
 
                 const component = Qt.createComponent("Step.qml");
                 if (Component.Ready === component.status) {
-                    component.createObject(steps, { step: newStep });
+                    const step_obj = component.createObject(steps, { step: newStep });
+                    step_obj.deleted.connect(function() {
+                        for (let k in task.steps) {
+                            if (task.steps[k].description === step_obj.step.description) {
+                                task.steps.splice(k, 1)
+                                taskEdited(root.task)
+                                step_obj.destroy()
+                                break
+                            }
+                        }
+                    })
                 }
-//                const buff = task
-//                task = null
-//                task = buff
             }
         }
     }
