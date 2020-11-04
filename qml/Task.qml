@@ -5,6 +5,7 @@ Item {
     id: root
 
     signal taskEdited(var task)
+    signal deleted()
 
     property var task: null
 
@@ -40,6 +41,7 @@ Item {
         color: '#66333333'
     }
     Column {
+        visible: task !== null
         anchors.centerIn: parent
         Row {
             spacing: 10
@@ -59,6 +61,12 @@ Item {
                     root.task.name = text
                     taskEdited(root.task)
                 }
+            }
+            Button {
+                width: 20
+                height: 20
+                text: '-'
+                onPressed: root.deleted()
             }
         }
         Column {

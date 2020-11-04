@@ -78,11 +78,26 @@ Window {
             }
         }
         for (const j in tasksDone) {
-            if (tasksInProgress[j].id === task.id) {
-                tasksInProgress[j] = task
+            if (tasksDone[j].id === task.id) {
+                tasksDone[j] = task
                 break
             }
         }
+    }
+    function deleteTask(task) {
+        for (const i in tasksInProgress) {
+            if (tasksInProgress[i].id === task.id) {
+                tasksInProgress.splice(i, 1)
+                break
+            }
+        }
+        for (const j in tasksDone) {
+            if (tasksDone[j].id === task.id) {
+                tasksDone.splice(j, 1)
+                break
+            }
+        }
+        updateModels()
     }
 
     Component.onCompleted:   load()
@@ -136,6 +151,12 @@ Window {
                 Layout.fillHeight: true
 
                 onTaskEdited: updateTask(currentTask.task)
+
+                onDeleted: {
+                    deleteTask(task)
+                    task = null
+                }
+
             }
             VerticalTapBar {
                 id: listTasksDone

@@ -23,7 +23,7 @@ Item {
     }
     TextField {
         anchors.fill: parent
-        visible: hoverHandler.hovered
+        visible: hoverHandler.hovered || (text != '')
         onEditingFinished: {
             if (visible) root.editingFinished(text)
             text = ''
