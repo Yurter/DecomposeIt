@@ -24,8 +24,10 @@ Item {
     TextField {
         anchors.fill: parent
         visible: hoverHandler.hovered
-        onVisibleChanged:  if (visible) text = ''
-        onEditingFinished: if (visible) root.editingFinished(text)
+        onEditingFinished: {
+            if (visible) root.editingFinished(text)
+            text = ''
+        }
     }
     HoverHandler {
         id: hoverHandler

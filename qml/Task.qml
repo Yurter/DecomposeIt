@@ -37,7 +37,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: '#333333'
+        color: '#66333333'
     }
     Column {
         anchors.centerIn: parent
@@ -66,13 +66,10 @@ Item {
             width: 300
             height: 150
         }
-        Button {
+        ButtonAddTask {
             visible: task !== null
-            width: 20
-            height: 20
-            text: '+'
-            onPressed: {
-                const newStep = createStep("Some step...")
+            onEditingFinished: {
+                const newStep = createStep(text)
                 task.steps.push(newStep)
                 taskEdited(root.task)
 
