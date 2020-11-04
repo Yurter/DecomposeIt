@@ -34,6 +34,8 @@ Item {
                 })
             }
         }
+
+//        steps.height = steps.childrenRect.height
     }
 
     Rectangle {
@@ -41,8 +43,9 @@ Item {
         color: '#66333333'
     }
     Column {
+        spacing: 5
         visible: task !== null
-        anchors.centerIn: parent
+//        anchors.centerIn: parent
         Row {
             spacing: 10
 
@@ -67,15 +70,17 @@ Item {
                 height: 20
                 text: '-'
                 onPressed: root.deleted()
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
+
         Column {
             id: steps
-            width: 300
-            height: 150
+            width: parent.width
         }
         ButtonAddTask {
             visible: task !== null
+            height: 40
             onEditingFinished: {
                 const newStep = createStep(text)
                 task.steps.push(newStep)

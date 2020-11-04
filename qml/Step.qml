@@ -4,8 +4,8 @@ import QtQuick.Controls 2.14
 Item {
     id: root
 
-    width: 100
-    height: 40
+    implicitWidth: 500
+    implicitHeight: 40
 
     signal deleted()
     signal stepEdited(var step)
@@ -13,20 +13,28 @@ Item {
     property var step
     onStepChanged: {
         if (step === null) { return }
+        console.log("step:", JSON.stringify(step))
         checkBox.checked = step.done
         checkBox.text = step.description
 
         for (let i in step.steps) {
             const component = Qt.createComponent("Step.qml");
             if (Component.Ready === component.status) {
-                component.createObject(subSteps, { step: steps[i] });
+                component.createObject(subSteps, { step: step.steps[i] });
             }
         }
+
+//        subSteps.height = subSteps.childrenRect.height
     }
 
+    height: childrenRect.height
     Column {
+        spacing: 5
+//        implicitWidth: 500
+//        height: childrenRect.height
         Row {
             CheckBox {
+                width: 100
                 id: checkBox
             }
             Button {
@@ -34,10 +42,13 @@ Item {
                 height: 20
                 text: '-'
                 onPressed: root.deleted()
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
         Column {
             id: subSteps
+//            width: parent.width
+//            height: 50
             x: 50
         }
         ButtonAddTask {
