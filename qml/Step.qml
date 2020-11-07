@@ -7,8 +7,8 @@ Item {
     implicitWidth: 500
     implicitHeight: 40
 
-    signal deleted()
-    signal stepEdited(var step)
+    signal deleted(var stepObject)
+    signal stepEdited()
 
     property var step
     onStepChanged: {
@@ -17,22 +17,26 @@ Item {
         checkBox.text = step.description
 
         for (let i in step.steps) {
-            const component = Qt.createComponent("Step.qml");
-            if (Component.Ready === component.status) {
-                const sub_step_obj = component.createObject(subSteps, { step: step.steps[i] });
-                sub_step_obj.deleted.connect(function() {
-                    for (let k in step.steps) {
-                        console.log(step.steps[k].description, sub_step_obj.step.description)
-                        if (step.steps[k].description === sub_step_obj.step.description) {
-                            step.steps.splice(k, 1)
-                            stepEdited(root.task)
-                            sub_step_obj.destroy()
-                            break
-                        }
-                    }
-                })
-            }
+            createSubStepObject(step.steps[i])
+        }
+    }
 
+    function createSubStepObject(subStep) {
+        const component = Qt.createComponent("Step.qml");
+        if (Component.Ready === component.status) {
+            const sub_step_obj = component.createObject(subSteps, { step: subStep });
+            sub_step_obj.deleted.connect(deleteSubStepObject)
+        }
+    }
+
+    function deleteSubStepObject(subStep) {
+        for (let i in step.steps) {
+            if (step.steps[i].description === subStep.step.description) {
+                step.steps.splice(i, 1)
+                stepEdited()
+                subStep.destroy()
+                break
+            }
         }
     }
 
@@ -43,12 +47,16 @@ Item {
             CheckBox {
                 width: 100
                 id: checkBox
+                onCheckedChanged: {
+                    step.done = checked
+                    stepEdited()
+                }
             }
             Button {
                 width: 20
                 height: 20
                 text: '-'
-                onPressed: root.deleted()
+                onPressed: root.deleted(root)
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -62,25 +70,9 @@ Item {
             onEditingFinished: {
                 const newStep = createStep(text)
                 step.steps.push(newStep)
-                taskEdited(root.task)
-
-                const component = Qt.createComponent("Step.qml");
-                if (Component.Ready === component.status) {
-                    const sub_step_obj = component.createObject(subSteps, { step: newStep });
-                    sub_step_obj.deleted.connect(function() {
-                        for (let k in step.steps) {
-                            console.log(step.steps[k].description, sub_step_obj.step.description)
-                            if (step.steps[k].description === sub_step_obj.step.description) {
-                                step.steps.splice(k, 1)
-                                stepEdited(root.task)
-                                sub_step_obj.destroy()
-                                break
-                            }
-                        }
-                    })
-                }
+                stepEdited()
+                createSubStepObject(newStep)
             }
         }
     }
-
 }

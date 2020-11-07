@@ -4,7 +4,7 @@ import QtQuick.Controls 2.14
 Item {
     id: root
 
-    signal taskEdited(var task)
+    signal taskEdited()
     signal deleted()
 
     property var task: null
@@ -26,12 +26,13 @@ Item {
                     for (let k in task.steps) {
                         if (task.steps[k].description === step_obj.step.description) {
                             task.steps.splice(k, 1)
-                            taskEdited(root.task)
+                            taskEdited()
                             step_obj.destroy()
                             break
                         }
                     }
                 })
+                step_obj.stepEdited.connect(taskEdited)
             }
         }
     }
@@ -59,7 +60,7 @@ Item {
 
                 onEditingFinished: {
                     root.task.name = text
-                    taskEdited(root.task)
+                    taskEdited()
                 }
             }
             Button {
@@ -81,7 +82,7 @@ Item {
             onEditingFinished: {
                 const newStep = createStep(text)
                 task.steps.push(newStep)
-                taskEdited(root.task)
+                taskEdited()
 
                 const component = Qt.createComponent("Step.qml");
                 if (Component.Ready === component.status) {
@@ -90,12 +91,13 @@ Item {
                         for (let k in task.steps) {
                             if (task.steps[k].description === step_obj.step.description) {
                                 task.steps.splice(k, 1)
-                                taskEdited(root.task)
+                                taskEdited()
                                 step_obj.destroy()
                                 break
                             }
                         }
                     })
+                    step_obj.stepEdited.connect(taskEdited)
                 }
             }
         }
