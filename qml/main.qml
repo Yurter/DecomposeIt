@@ -2,7 +2,6 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
-import CppClasses 1.0
 
 Window {
     id: root
@@ -14,20 +13,18 @@ Window {
     property var tasksInProgress: []
     property var tasksDone: []
 
-    property var utils: Utils {}
-
     readonly property string storageFileName: 'tasks.data'
     function save() {
         const data = {
               tasksInProgress: tasksInProgress
             , tasksDone: tasksDone
         }
-        if (!utils.writeToFile(storageFileName, JSON.stringify(data, null, 2))) {
+        if (!Utils.writeToFile(storageFileName, JSON.stringify(data, null, 2))) {
             console.exception("Failed to save data!")
         }
     }
     function load() {
-        const data = JSON.parse(utils.readFromFile(storageFileName))
+        const data = JSON.parse(Utils.readFromFile(storageFileName))
         tasksInProgress = data.tasksInProgress
         tasksDone = data.tasksDone
         updateModels()
@@ -35,7 +32,8 @@ Window {
 
     function createTask(taskId) {
         return {
-            id: taskId
+            uuid: generateUuid()
+          , id: taskId
           , done: false
           , name: "DefaultTaskName"
           , steps: []
@@ -43,7 +41,8 @@ Window {
     }
     function createStep(description) {
         return {
-              description: description
+              uuid: generateUuid()
+            , description: description
             , done: false
             , steps: []
         }
@@ -57,6 +56,7 @@ Window {
     function createNewTask(taskId) {
         const newTask = createTask(taskId)
         tasksInProgress.push(newTask)
+        save()
         updateModels()
         return newTask
     }
@@ -84,6 +84,7 @@ Window {
                 break
             }
         }
+        save()
     }
     function deleteTask(task) {
         for (const i in tasksInProgress) {
@@ -99,10 +100,51 @@ Window {
             }
         }
         updateModels()
+        save()
     }
 
-    Component.onCompleted:   load()
-    Component.onDestruction: save()
+    Component.onCompleted: load()
+
+    function createComponent(fileName) {
+        const component = Qt.createComponent(fileName)
+        if (Component.Ready !== component.status) {
+            console.exception(fileName, "component is not ready!")
+        }
+        return component
+    }
+
+    readonly property Component componentTask: createComponent("Task.qml")
+    readonly property Component componentStep: createComponent("Step.qml")
+
+    function createStepObject(parent, properties) {
+        const object = componentStep.createObject(parent, properties);
+        object.deleted.connect(deleteSubStepObject)
+    }
+
+    function deleteStepObject(subStep) { // TODO: remove
+        for (let i in step.steps) {
+            if (step.steps[i].description === subStep.step.description) {
+                step.steps.splice(i, 1)
+                stepEdited()
+                subStep.destroy()
+                break
+            }
+        }
+    }
+
+    function generateUuid() {
+        const now = new Date()
+        const utc_now = new Date(
+              now.getUTCFullYear()
+            , now.getUTCMonth()
+            , now.getUTCDate()
+            , now.getUTCHours()
+            , now.getUTCMinutes()
+            , now.getUTCSeconds()
+            , now.getUTCMilliseconds()
+        )
+        return utc_now.getTime()
+    }
 
     ColumnLayout {
         anchors.fill: parent
