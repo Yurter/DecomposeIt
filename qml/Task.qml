@@ -34,8 +34,6 @@ Item {
                 })
             }
         }
-
-//        steps.height = steps.childrenRect.height
     }
 
     Rectangle {
@@ -45,7 +43,6 @@ Item {
     Column {
         spacing: 5
         visible: task !== null
-//        anchors.centerIn: parent
         Row {
             spacing: 10
 
