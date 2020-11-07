@@ -36,6 +36,7 @@ Window {
     function createTask(taskId) {
         return {
             id: taskId
+          , done: false
           , name: "DefaultTaskName"
           , steps: []
       }
