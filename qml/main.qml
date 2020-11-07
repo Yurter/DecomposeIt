@@ -183,7 +183,7 @@ Window {
 
                 Label {
                     anchors.centerIn: parent
-                    text: tasksInProgress.length
+                    text: listTasksInProgress.model.length
                     color: 'white'
                     font.bold: true
                 }
@@ -195,7 +195,7 @@ Window {
 
                 Label {
                     anchors.centerIn: parent
-                    text: tasksDone.length
+                    text: listTasksDone.model.length
                     color: 'white'
                     font.bold: true
                 }
