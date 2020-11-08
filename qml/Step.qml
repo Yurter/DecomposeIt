@@ -4,39 +4,25 @@ import QtQuick.Controls 2.14
 Item {
     id: root
 
+    property var stepData: null
+
+//    property string uuid
+//    property string description
+//    property bool   done
+//    property var    steps
+//    property var    parentStep
+
     implicitWidth: 500
     implicitHeight: 40
 
-    signal deleted(var stepObject)
-    signal stepEdited()
+    signal edited()
 
-    property var step
-    onStepChanged: {
-        if (step === null) { return }
-        checkBox.checked = step.done
-        checkBox.text = step.description
-
-        for (let i in step.steps) {
-            createSubStepObject(step.steps[i])
-        }
-    }
-
-    function createSubStepObject(subStep) {
-        const component = Qt.createComponent("Step.qml");
-        if (Component.Ready === component.status) {
-            const sub_step_obj = component.createObject(subSteps, { step: subStep });
-            sub_step_obj.deleted.connect(deleteSubStepObject)
-        }
-    }
-
-    function deleteSubStepObject(subStep) {
-        for (let i in step.steps) {
-            if (step.steps[i].description === subStep.step.description) {
-                step.steps.splice(i, 1)
-                stepEdited()
-                subStep.destroy()
-                break
-            }
+    onStepDataChanged: {
+        checkBox.checked = stepData.done
+        checkBox.text = stepData.description
+        for (let i in stepData.steps) {
+            const object = createStepObject(subSteps, { stepData: stepData.steps[i] })
+            object.edited.connect(edited)
         }
     }
 
@@ -48,15 +34,25 @@ Item {
                 width: 100
                 id: checkBox
                 onCheckedChanged: {
-                    step.done = checked
-                    stepEdited()
+                    stepData.done = checked
+                    edited()
                 }
             }
             Button {
                 width: 20
                 height: 20
                 text: '-'
-                onPressed: root.deleted(root)
+                onPressed: {
+//                    for (let i in parentStep.steps) {
+//                        if (parentStep.steps[i].uuid === uuid) {
+//                            parentStep.steps.splice(i, 1)
+//                            edited()
+//                            destroy()
+//                            break
+//                        }
+//                    }
+                }
+
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
@@ -65,13 +61,14 @@ Item {
             x: 50
         }
         ButtonAddTask {
-            visible: step !== null
+//            visible: step !== null
             height: 20
             onEditingFinished: {
                 const newStep = createStep(text)
-                step.steps.push(newStep)
-                stepEdited()
-                createSubStepObject(newStep)
+                stepData.steps.push(newStep)
+                const object = createStepObject(subSteps, { stepData: newStep })
+                object.edited.connect(edited)
+                edited()
             }
         }
     }

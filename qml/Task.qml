@@ -4,36 +4,28 @@ import QtQuick.Controls 2.14
 Item {
     id: root
 
-    signal taskEdited()
-    signal deleted()
+    property var taskData: null
+//    property string uuid
+//    property int    id
+//    property bool   done
+//    property string name
+//    property var    steps
 
-    property var task: null
+    signal edited()
 
-    onTaskChanged: {
-        for (let j in steps.children) {
-            steps.children[j].destroy()
+    onTaskDataChanged: {
+        console.log("Task::onTaskDataChanged")
+        for (let j in stepsColumn.children) {
+            stepsColumn.children[j].destroy()
         }
 
-        if (task === null) { return }
-        labelId.text = task.id
-        editLabelName.text = task.name
+        labelId.text = taskData.id
+        editLabelName.text = taskData.name
 
-        for (let i in task.steps) {
-            const component = Qt.createComponent("Step.qml");
-            if (Component.Ready === component.status) {
-                const step_obj = component.createObject(steps, { step: task.steps[i] });
-                step_obj.deleted.connect(function() {
-                    for (let k in task.steps) {
-                        if (task.steps[k].description === step_obj.step.description) {
-                            task.steps.splice(k, 1)
-                            taskEdited()
-                            step_obj.destroy()
-                            break
-                        }
-                    }
-                })
-                step_obj.stepEdited.connect(taskEdited)
-            }
+        for (let i in taskData.steps) {
+            const object = createStepObject(stepsColumn, { stepData: taskData.steps[i] })
+            console.log("===", taskData.steps[i] === object.taskData)
+            object.edited.connect(edited)
         }
     }
 
@@ -43,7 +35,7 @@ Item {
     }
     Column {
         spacing: 5
-        visible: task !== null
+//        visible: root.data !== null
         Row {
             spacing: 10
 
@@ -59,46 +51,43 @@ Item {
                 font.bold: true
 
                 onEditingFinished: {
-                    root.task.name = text
-                    taskEdited()
+                    taskData.name = text
+                    edited()
                 }
             }
             Button {
                 width: 20
                 height: 20
                 text: '-'
-                onPressed: root.deleted()
+                onPressed: {
+//                    for (let i in parentStep.steps) {
+//                        if (parentStep.steps[i].uuid === uuid) {
+//                            parentStep.steps.splice(i, 1)
+//                            edited()
+//                            destroy()
+//                            break
+//                        }
+//                    }
+                }
+
                 anchors.verticalCenter: parent.verticalCenter
             }
         }
 
         Column {
-            id: steps
+            id: stepsColumn
             width: parent.width
         }
         ButtonAddTask {
-            visible: task !== null
+//            visible: task !== null
             height: 40
             onEditingFinished: {
+                console.log("onEditingFinished")
                 const newStep = createStep(text)
-                task.steps.push(newStep)
-                taskEdited()
-
-                const component = Qt.createComponent("Step.qml");
-                if (Component.Ready === component.status) {
-                    const step_obj = component.createObject(steps, { step: newStep });
-                    step_obj.deleted.connect(function() {
-                        for (let k in task.steps) {
-                            if (task.steps[k].description === step_obj.step.description) {
-                                task.steps.splice(k, 1)
-                                taskEdited()
-                                step_obj.destroy()
-                                break
-                            }
-                        }
-                    })
-                    step_obj.stepEdited.connect(taskEdited)
-                }
+                steps.push(newStep)
+                const object = createStepObject(stepsColumn, { stepData: newStep })
+                object.edited.connect(edited)
+                edited()
             }
         }
     }

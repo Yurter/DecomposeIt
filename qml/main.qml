@@ -15,6 +15,7 @@ Window {
 
     readonly property string storageFileName: 'tasks.data'
     function save() {
+        console.log("save")
         const data = {
               tasksInProgress: tasksInProgress
             , tasksDone: tasksDone
@@ -24,6 +25,7 @@ Window {
         }
     }
     function load() {
+        console.log("load")
         const data = JSON.parse(Utils.readFromFile(storageFileName))
         tasksInProgress = data.tasksInProgress
         tasksDone = data.tasksDone
@@ -54,6 +56,7 @@ Window {
         step.subStep.push(subStep)
     }
     function createNewTask(taskId) {
+        console.log("createNewTask")
         const newTask = createTask(taskId)
         tasksInProgress.push(newTask)
         save()
@@ -62,7 +65,12 @@ Window {
     }
 
     function displayTask(task) {
-        currentTask.task = task
+        console.log("displayTask")
+        console.log(JSON.stringify(task))
+        currentTask.taskData = task
+//        for (const [key, value] of Object.entries(task)) {
+//            currentTask[key] = value
+//        }
     }
     function updateModels() {
         listTasksInProgress.model = []
@@ -72,14 +80,37 @@ Window {
         listTasksDone.model = tasksDone
     }
     function updateTask(task) {
+        console.log("updateTask")
         for (const i in tasksInProgress) {
-            if (tasksInProgress[i].id === task.id) {
-                tasksInProgress[i] = task
-                break
+            console.log(tasksInProgress[i].uuid, task.uuid)
+            if (tasksInProgress[i].uuid == task.uuid) {
+                console.log("i =", i)
+                console.log(
+                                               task.uuid
+                                             , task.id
+                                             , task.done
+                                             , task.name
+                                             , task.steps
+                                         )
+                console.log("len:", task.steps.length)
+                for (let g in task.steps) {
+                    console.log(JSON.stringify(task.steps[g]))
+                }
+
+                console.log("task.steps:", JSON.stringify(task.steps))
+                tasksInProgress[i] = {
+                    uuid: task.uuid
+                  , id: task.id
+                  , done: task.done
+                  , name: task.name
+                  , steps: task.steps
+              }
+              console.log("updated task:", JSON.stringify(tasksInProgress[i]))
+              break
             }
         }
         for (const j in tasksDone) {
-            if (tasksDone[j].id === task.id) {
+            if (tasksDone[j].uuid === task.uuid) {
                 tasksDone[j] = task
                 break
             }
@@ -88,13 +119,13 @@ Window {
     }
     function deleteTask(task) {
         for (const i in tasksInProgress) {
-            if (tasksInProgress[i].id === task.id) {
+            if (tasksInProgress[i].uuid === task.uuid) {
                 tasksInProgress.splice(i, 1)
                 break
             }
         }
         for (const j in tasksDone) {
-            if (tasksDone[j].id === task.id) {
+            if (tasksDone[j].uuid === task.uuid) {
                 tasksDone.splice(j, 1)
                 break
             }
@@ -113,24 +144,23 @@ Window {
         return component
     }
 
-    readonly property Component componentTask: createComponent("Task.qml")
-    readonly property Component componentStep: createComponent("Step.qml")
+    property Component componentStep: createComponent("Step.qml")
 
     function createStepObject(parent, properties) {
-        const object = componentStep.createObject(parent, properties);
-        object.deleted.connect(deleteSubStepObject)
+        return createComponent("Step.qml").createObject(parent, properties)
     }
+//        object.deleted.connect(deleteSubStepObject)
 
-    function deleteStepObject(subStep) { // TODO: remove
-        for (let i in step.steps) {
-            if (step.steps[i].description === subStep.step.description) {
-                step.steps.splice(i, 1)
-                stepEdited()
-                subStep.destroy()
-                break
-            }
-        }
-    }
+//    function deleteStepObject(subStep) { // TODO: remove
+//        for (let i in step.steps) {
+//            if (step.steps[i].description === subStep.step.description) {
+//                step.steps.splice(i, 1)
+//                stepEdited()
+//                subStep.destroy()
+//                break
+//            }
+//        }
+//    }
 
     function generateUuid() {
         const now = new Date()
@@ -193,12 +223,12 @@ Window {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onTaskEdited: updateTask(currentTask.task)
+                onEdited: updateTask(currentTask)
 
-                onDeleted: {
-                    deleteTask(task)
-                    task = null
-                }
+//                onDeleted: {
+//                    deleteTask(task)
+//                    task = null
+//                }
 
             }
             VerticalTapBar {
