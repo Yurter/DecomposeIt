@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
+import DecomposeIt 1.0
 
 Window {
     id: root
@@ -156,7 +157,41 @@ Window {
         return utc_now.getTime()
     }
 
+    ListView {
+        id: test
+        anchors.fill: parent
+
+        model: TaskModel {
+           list: taskList
+        }
+
+        delegate: RowLayout {
+            CheckBox {
+                checked: model.done
+                onClicked: model.done = checked
+            }
+            TextField {
+                text: model.description
+                onEditingFinished: model.description = text
+                Layout.fillWidth: true
+            }
+        }
+    }
+    Row {
+        spacing: 5
+        anchors.bottom: parent.bottom
+        Button {
+            text: qsTr("Add new item")
+            onClicked: taskList.appendItem()
+        }
+        Button {
+            text: qsTr("Remove completed")
+            onClicked: taskList.removeCompletedItems()
+        }
+    }
+
     ColumnLayout {
+        visible: false
         anchors.fill: parent
         spacing: 0
 

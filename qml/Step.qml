@@ -46,15 +46,17 @@ Item {
 //                checked: modelData.done
                 text: modelData.description
                 onCheckedChanged: {
-                    console.log("onCheckedChanged1", modelData.done)
+                    console.log("---------------------onCheckedChanged1", modelData.done)
                     modelData.done = true
-                    console.log("onCheckedChanged2", modelData.done)
+                    console.log("---------------------onCheckedChanged2", modelData.done)
+                    modelData.done = false
+                    console.log("---------------------onCheckedChanged3", modelData.done)
 
 
 //                    console.log("onCheckedChanged1", modelData.done, checked)
-                    let copy = modelData
-                    copy.done = checked
-                    modelData = copy
+//                    let copy = modelData
+//                    copy.done = checked
+//                    modelData = copy
 //                    modelData.done = checked
 //                    modelData.updateData(index, "done", checked)
 //                    console.log("onCheckedChanged2", modelData.done)

@@ -16,7 +16,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         DataModel.cpp \
         Utils.cpp \
-        main.cpp
+        main.cpp \
+        qml/TaskList.cpp \
+        qml/TaskModel.cpp
 
 RESOURCES += qml.qrc
 
@@ -33,6 +35,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     DataModel.hpp \
-    Utils.hpp
+    Utils.hpp \
+    qml/TaskList.hpp \
+    qml/TaskModel.hpp
 
 DISTFILES +=
