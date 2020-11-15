@@ -4,7 +4,8 @@ import QtQuick.Controls 2.14
 Item {
     id: root
 
-    property var stepData: null
+    property var model: []
+//    property var stepData: null
 
 //    property string uuid
 //    property string description
@@ -17,14 +18,22 @@ Item {
 
     signal edited()
 
-    onStepDataChanged: {
-        checkBox.checked = stepData.done
-        checkBox.text = stepData.description
-        for (let i in stepData.steps) {
-            const object = createStepObject(subSteps, { stepData: stepData.steps[i] })
-            object.edited.connect(edited)
-        }
+    function setModel(newModel) {
+        model = newModel
+        updateModel()
     }
+
+    function updateModel() {
+        listView.model = []
+        listView.model = root.model
+    }
+
+//    onStepDataChanged: {
+//        for (let i in stepData.steps) {
+//            const object = createStepObject(subSteps, { stepData: stepData.steps[i] })
+//            object.edited.connect(edited)
+//        }
+//    }
 
     height: childrenRect.height
     Column {
@@ -33,8 +42,22 @@ Item {
             CheckBox {
                 width: 100
                 id: checkBox
+
+//                checked: modelData.done
+                text: modelData.description
                 onCheckedChanged: {
-                    stepData.done = checked
+                    console.log("onCheckedChanged1", modelData.done)
+                    modelData.done = true
+                    console.log("onCheckedChanged2", modelData.done)
+
+
+//                    console.log("onCheckedChanged1", modelData.done, checked)
+                    let copy = modelData
+                    copy.done = checked
+                    modelData = copy
+//                    modelData.done = checked
+//                    modelData.updateData(index, "done", checked)
+//                    console.log("onCheckedChanged2", modelData.done)
                     edited()
                 }
             }
@@ -65,7 +88,7 @@ Item {
             height: 20
             onEditingFinished: {
                 const newStep = createStep(text)
-                stepData.steps.push(newStep)
+                modelData.steps.push(newStep)
                 const object = createStepObject(subSteps, { stepData: newStep })
                 object.edited.connect(edited)
                 edited()

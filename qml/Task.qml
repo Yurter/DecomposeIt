@@ -14,19 +14,26 @@ Item {
     signal edited()
 
     onTaskDataChanged: {
-        console.log("Task::onTaskDataChanged")
-        for (let j in stepsColumn.children) {
-            stepsColumn.children[j].destroy()
-        }
+//        console.log("Task::onTaskDataChanged")
+//        for (let j in stepsColumn.children) {
+//            stepsColumn.children[j].destroy()
+//        }
+
+        listView.model = taskData.steps
+//        console.log("1) ++++++++++++++++", JSON.stringify(listView.model), JSON.stringify(taskData.steps))
+//        listView.model[0] = null
+//        console.log("2) ++++++++++++++++", JSON.stringify(listView.model[0]))
+//        console.log("2) ++++++++++++++++", JSON.stringify(listView.model), JSON.stringify(taskData.steps))
+//        console.log("3) ++++++++++++++++", JSON.stringify(listView.model), JSON.stringify(taskData.steps))
 
         labelId.text = taskData.id
         editLabelName.text = taskData.name
 
-        for (let i in taskData.steps) {
-            const object = createStepObject(stepsColumn, { stepData: taskData.steps[i] })
-            console.log("===", taskData.steps[i] === object.taskData)
-            object.edited.connect(edited)
-        }
+//        for (let i in taskData.steps) {
+//            const object = createStepObject(stepsColumn, { stepData: taskData.steps[i] })
+//            console.log("===", taskData.steps[i] === object.taskData)
+//            object.edited.connect(edited)
+//        }
     }
 
     Rectangle {
@@ -35,6 +42,7 @@ Item {
     }
     Column {
         spacing: 5
+        height: 500
 //        visible: root.data !== null
         Row {
             spacing: 10
@@ -74,9 +82,28 @@ Item {
             }
         }
 
-        Column {
-            id: stepsColumn
+        ListView {
+            id: listView
+//            model: root.model
             width: parent.width
+            height: 500
+            orientation: ListView.Vertical
+    //        spacing: root.spacing
+            delegate: Step {
+                onEdited: {
+                    console.log("=================>", root.modelData === root.modelData, JSON.stringify(modelData))
+                    console.log("onCheckedChanged1", modelData.done)
+                    modelData.done = true
+                    console.log("onCheckedChanged2", modelData.done)
+                    console.log("1->>", JSON.stringify(modelData))
+//                    console.log("2->>", JSON.stringify(editedModelData))
+//                    taskData[editedModelData.index] = editedModelData
+//                    taskData[editedModelData.index] = modelData
+                    taskData[index] = modelData
+                    console.log("2->>", JSON.stringify(taskData[index]))
+                    root.edited()
+                }
+            }
         }
         ButtonAddTask {
 //            visible: task !== null
@@ -84,9 +111,8 @@ Item {
             onEditingFinished: {
                 console.log("onEditingFinished")
                 const newStep = createStep(text)
-                steps.push(newStep)
-                const object = createStepObject(stepsColumn, { stepData: newStep })
-                object.edited.connect(edited)
+                modelData.steps.push(newStep)
+                updateModel()
                 edited()
             }
         }

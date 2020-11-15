@@ -79,39 +79,19 @@ Window {
         listTasksDone.model = []
         listTasksDone.model = tasksDone
     }
-    function updateTask(task) {
-        console.log("updateTask")
+    function updateTask(taskData) {
+        console.log("updateTask", JSON.stringify(taskData))
         for (const i in tasksInProgress) {
-            console.log(tasksInProgress[i].uuid, task.uuid)
-            if (tasksInProgress[i].uuid == task.uuid) {
-                console.log("i =", i)
-                console.log(
-                                               task.uuid
-                                             , task.id
-                                             , task.done
-                                             , task.name
-                                             , task.steps
-                                         )
-                console.log("len:", task.steps.length)
-                for (let g in task.steps) {
-                    console.log(JSON.stringify(task.steps[g]))
-                }
-
-                console.log("task.steps:", JSON.stringify(task.steps))
-                tasksInProgress[i] = {
-                    uuid: task.uuid
-                  , id: task.id
-                  , done: task.done
-                  , name: task.name
-                  , steps: task.steps
-              }
-              console.log("updated task:", JSON.stringify(tasksInProgress[i]))
-              break
+            console.log(tasksInProgress[i].uuid, taskData.uuid)
+            if (tasksInProgress[i].uuid == taskData.uuid) {
+                tasksInProgress[i] = taskData
+                console.log("updated task:", JSON.stringify(tasksInProgress[i]))
+                break
             }
         }
         for (const j in tasksDone) {
-            if (tasksDone[j].uuid === task.uuid) {
-                tasksDone[j] = task
+            if (tasksDone[j].uuid === taskData.uuid) {
+                tasksDone[j] = taskData
                 break
             }
         }
@@ -223,7 +203,7 @@ Window {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onEdited: updateTask(currentTask)
+                onEdited: updateTask(currentTask.taskData)
 
 //                onDeleted: {
 //                    deleteTask(task)
