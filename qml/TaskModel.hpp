@@ -11,8 +11,10 @@ public:
     explicit TaskModel(QObject* parent = nullptr);
 
     enum {
-          DoneRole = Qt::UserRole
+          IdRole = Qt::UserRole
+        , DoneRole
         , DescriptionRole
+//        , StepsRole
     };
 
     // Basic functionality:

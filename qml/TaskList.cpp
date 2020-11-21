@@ -2,8 +2,8 @@
 
 TaskList::TaskList(QObject* parent)
     : QObject(parent) {
-    _items.append({ true, QStringLiteral("Task_10") });
-    _items.append({ false, QStringLiteral("Task_20") });
+    _items.append({ 0, true,  QStringLiteral("Task_10") });
+    _items.append({ 1, false, QStringLiteral("Task_20") });
 }
 
 QVector<TaskItem> TaskList::items() const {
@@ -16,7 +16,7 @@ bool TaskList::setItemAt(int index, const TaskItem& item) {
     }
 
     const TaskItem& oldItem { _items.at(index) };
-    if ((item.done == oldItem.done) && (item.description == oldItem.description)) {
+    if (oldItem == item) {
         return false;
     }
 

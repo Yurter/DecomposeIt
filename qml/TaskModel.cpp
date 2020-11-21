@@ -1,6 +1,6 @@
 #include "TaskModel.hpp"
 #include "TaskList.hpp"
-
+#include <qdebug.h>
 TaskModel::TaskModel(QObject* parent)
     : QAbstractListModel(parent)
     , _list { nullptr } {
@@ -22,8 +22,12 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const {
     }
 
     const auto item { _list->items().at(index.row()) };
+    qDebug() << "id role:" << (role == IdRole) << item.id;
 
     switch (role) {
+        case IdRole: {
+            return QVariant { item.id };
+        }
         case DoneRole: {
             return QVariant { item.done };
         }
@@ -41,6 +45,10 @@ bool TaskModel::setData(const QModelIndex& index, const QVariant& value, int rol
 
     auto item { _list->items().at(index.row()) };
     switch (role) {
+        case IdRole: {
+            item.id = value.toInt();
+            break;
+        }
         case DoneRole: {
             item.done = value.toBool();
             break;
@@ -67,6 +75,7 @@ Qt::ItemFlags TaskModel::flags(const QModelIndex& index) const {
 
 QHash<int, QByteArray> TaskModel::roleNames() const {
     QHash<int, QByteArray> names;
+    names[IdRole] = "id";
     names[DoneRole] = "done";
     names[DescriptionRole] = "description";
     return names;

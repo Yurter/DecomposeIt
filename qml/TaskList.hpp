@@ -3,8 +3,15 @@
 #include <QVector>
 
 struct TaskItem {
+    int id;
     bool done;
     QString description;
+
+    bool operator==(const TaskItem& other) const {
+        return (this->id == other.id)
+            && (this->done == other.done)
+            && (this->description == other.description);
+    }
 };
 
 class TaskList : public QObject {
