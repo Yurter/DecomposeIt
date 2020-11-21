@@ -24,11 +24,9 @@ bool TaskList::setItemAt(int index, const TaskItem& item) {
     return true;
 }
 
-void TaskList::appendItem() {
+void TaskList::appendItem(const TaskItem& item) {
     emit preItemAppended();
 
-    TaskItem item;
-    item.done = false;
     _items.append(item);
 
     emit postItemAppended();

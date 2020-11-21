@@ -14,10 +14,12 @@ Item {
 
         model: TaskModel {
            list: taskList
+           fileName: 'model.txt'
+           Component.onCompleted: model.load()
         }
 
         delegate: RowLayout {
-            visible: currentTaskId === model.id
+//            visible: currentTaskId === model.id
 
             CheckBox {
                 checked: model.done

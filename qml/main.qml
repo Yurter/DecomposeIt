@@ -25,13 +25,13 @@ Window {
             console.exception("Failed to save data!")
         }
     }
-    function load() {
+//    function load() {
 //        console.log("load")
 //        const data = JSON.parse(Utils.readFromFile(storageFileName))
 //        tasksInProgress = data.tasksInProgress
 //        tasksDone = data.tasksDone
 //        updateModels()
-    }
+//    }
 
     function createTask(taskId) {
         return {

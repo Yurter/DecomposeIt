@@ -1,9 +1,53 @@
 #include "TaskModel.hpp"
 #include "TaskList.hpp"
-#include <qdebug.h>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
 TaskModel::TaskModel(QObject* parent)
     : QAbstractListModel(parent)
     , _list { nullptr } {
+}
+
+bool TaskModel::load() {
+    QFile file { _fileName };
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    for (const auto el : QJsonDocument {}.fromJson(file.readAll()).array()) {
+        const auto obj { el.toObject() };
+        _list->appendItem({
+              obj["id"].toInt()
+            , obj["done"].toBool()
+            , obj["description"].toString()
+        });
+    }
+
+    return true;
+}
+
+bool TaskModel::save() {
+    QFile file { _fileName };
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        return false;
+    }
+
+    QJsonArray array;
+    for (const auto el : _list->items()) {
+        array.append(QJsonObject {
+              { "id", el.id }
+            , { "done", el.done }
+            , { "description", el.description }
+        });
+    }
+
+    if (-1 == file.write(QJsonDocument { array }.toJson())) {
+        return false;
+    }
+
+    return false;
 }
 
 int TaskModel::rowCount(const QModelIndex& parent) const {
@@ -22,7 +66,6 @@ QVariant TaskModel::data(const QModelIndex& index, int role) const {
     }
 
     const auto item { _list->items().at(index.row()) };
-    qDebug() << "id role:" << (role == IdRole) << item.id;
 
     switch (role) {
         case IdRole: {
@@ -61,6 +104,7 @@ bool TaskModel::setData(const QModelIndex& index, const QVariant& value, int rol
 
     if (_list->setItemAt(index.row(), item)) {
         emit dataChanged(index, index, QVector<int>() << role);
+        save();
         return true;
     }
     return false;
@@ -112,4 +156,12 @@ void TaskModel::setList(TaskList* list) {
     }
 
     endResetModel();
+}
+
+QString TaskModel::fileName() const {
+    return _fileName;
+}
+
+void TaskModel::setFileName(const QString& fileName) {
+    _fileName = fileName;
 }

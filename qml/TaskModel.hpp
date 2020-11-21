@@ -6,6 +6,7 @@ class TaskList;
 class TaskModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(TaskList* list READ list WRITE setList)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
     explicit TaskModel(QObject* parent = nullptr);
@@ -16,6 +17,9 @@ public:
         , DescriptionRole
 //        , StepsRole
     };
+
+    Q_INVOKABLE bool load();
+    Q_INVOKABLE bool save();
 
     // Basic functionality:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -33,6 +37,10 @@ public:
     TaskList* list() const;
     void setList(TaskList* list);
 
+    QString fileName() const;
+    void setFileName(const QString& fileName);
+
 private:
     TaskList* _list;
+    QString _fileName;
 };

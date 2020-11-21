@@ -32,7 +32,8 @@ signals:
     void postItemRemoved();
 
 public slots:
-    void appendItem();
+    void appendItem(const TaskItem& item);
+
     void removeCompletedItems();
 
 private:
