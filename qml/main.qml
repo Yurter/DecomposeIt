@@ -26,11 +26,11 @@ Window {
         }
     }
     function load() {
-        console.log("load")
-        const data = JSON.parse(Utils.readFromFile(storageFileName))
-        tasksInProgress = data.tasksInProgress
-        tasksDone = data.tasksDone
-        updateModels()
+//        console.log("load")
+//        const data = JSON.parse(Utils.readFromFile(storageFileName))
+//        tasksInProgress = data.tasksInProgress
+//        tasksDone = data.tasksDone
+//        updateModels()
     }
 
     function createTask(taskId) {
@@ -157,41 +157,41 @@ Window {
         return utc_now.getTime()
     }
 
-    ListView {
-        id: test
-        anchors.fill: parent
+//    ListView {
+//        id: test
+//        anchors.fill: parent
 
-        model: TaskModel {
-           list: taskList
-        }
+//        model: TaskModel {
+//           list: taskList
+//        }
 
-        delegate: RowLayout {
-            CheckBox {
-                checked: model.done
-                onClicked: model.done = checked
-            }
-            TextField {
-                text: model.description
-                onEditingFinished: model.description = text
-                Layout.fillWidth: true
-            }
-        }
-    }
-    Row {
-        spacing: 5
-        anchors.bottom: parent.bottom
-        Button {
-            text: qsTr("Add new item")
-            onClicked: taskList.appendItem()
-        }
-        Button {
-            text: qsTr("Remove completed")
-            onClicked: taskList.removeCompletedItems()
-        }
-    }
+//        delegate: RowLayout {
+//            CheckBox {
+//                checked: model.done
+//                onClicked: model.done = checked
+//            }
+//            TextField {
+//                text: model.description
+//                onEditingFinished: model.description = text
+//                Layout.fillWidth: true
+//            }
+//        }
+//    }
+//    Row {
+//        spacing: 5
+//        anchors.bottom: parent.bottom
+//        Button {
+//            text: qsTr("Add new item")
+//            onClicked: taskList.appendItem()
+//        }
+//        Button {
+//            text: qsTr("Remove completed")
+//            onClicked: taskList.removeCompletedItems()
+//        }
+//    }
 
     ColumnLayout {
-        visible: false
+//        visible: false
         anchors.fill: parent
         spacing: 0
 
@@ -233,12 +233,14 @@ Window {
                 onTabTapped: displayTask(model[index])
             }
             Task {
-                id: currentTask
+                id: currentTask2
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                onEdited: updateTask(currentTask.taskData)
+//                onEdited: updateTask(currentTask.taskData)
+
+                currentTaskId: 1
 
 //                onDeleted: {
 //                    deleteTask(task)
@@ -270,7 +272,7 @@ Window {
 
                 Label {
                     anchors.centerIn: parent
-                    text: listTasksInProgress.model.length
+//                    text: listTasksInProgress.model.length
                     color: 'white'
                     font.bold: true
                 }
@@ -282,7 +284,7 @@ Window {
 
                 Label {
                     anchors.centerIn: parent
-                    text: listTasksDone.model.length
+//                    text: listTasksDone.model.length
                     color: 'white'
                     font.bold: true
                 }
