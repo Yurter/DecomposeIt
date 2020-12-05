@@ -15,7 +15,7 @@ Item {
         model: TaskModel {
            list: taskList
            fileName: 'model.txt'
-           Component.onCompleted: model.load()
+           Component.onCompleted: load()
         }
 
         delegate: RowLayout {

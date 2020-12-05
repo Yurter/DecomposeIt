@@ -115,7 +115,7 @@ Window {
         save()
     }
 
-    Component.onCompleted: load()
+//    Component.onCompleted: load()
 
     function createComponent(fileName) {
         const component = Qt.createComponent(fileName)
